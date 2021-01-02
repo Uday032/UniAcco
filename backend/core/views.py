@@ -65,4 +65,5 @@ class UserLogin(APIView):
         obj = User.objects.get(id= serializer.data[0]['id'])
         print(get_client_ip(request))
         ipsave = UserLoginHistory(ipaddress= get_client_ip(request),user= obj)
+        ipsave.save()
         return Response(data, status=status.HTTP_200_OK)
