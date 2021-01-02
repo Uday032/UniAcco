@@ -14,7 +14,8 @@ class App extends Component {
     this.state = {
       displayed_form: '',
       logged_in: localStorage.getItem('token') ? true : false,
-      username: ''
+      username: '',
+      error: ''
     };
   }
 
@@ -34,7 +35,7 @@ class App extends Component {
 
   handle_login = (e, data) => {
     e.preventDefault();
-    fetch('http://localhost:8000/token-auth/', {
+    fetch('http://localhost:8000/core/loginuser/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -43,12 +44,18 @@ class App extends Component {
     })
       .then(res => res.json())
       .then(json => {
-        localStorage.setItem('token', json.token);
+        console.log(json);
+        if(json.token) {
+          localStorage.setItem('token', json.token);
+          this.setState({
+            logged_in: true,
+            displayed_form: '',
+            username: json.user[0].username
+          });
+        }
         this.setState({
-          logged_in: true,
-          displayed_form: '',
-          username: json.user.username
-        });
+          error: json
+        })
       });
   };
 
@@ -74,7 +81,7 @@ class App extends Component {
 
   handle_logout = () => {
     localStorage.removeItem('token');
-    this.setState({ logged_in: false, username: '' });
+    this.setState({ logged_in: false, username: '', error: '' });
   };
 
   display_form = form => {
@@ -108,7 +115,7 @@ class App extends Component {
           <h3>
             {this.state.logged_in
               ? `Hello, ${this.state.username}`
-              : ''}
+              : `${this.state.error}`}
           </h3>
         </Container>
       </div>
