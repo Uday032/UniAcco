@@ -144,3 +144,5 @@ CORS_ORIGIN_WHITELIST = (
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler'
 }
+
+JWT_SECRET_KEY= 'zNVCFMlnHwzRsEfXypQkhYxqcx4ZkfwWYwBayU03NmJSZzVTn8tErVh0SK9sQWC'

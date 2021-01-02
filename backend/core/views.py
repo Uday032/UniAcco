@@ -6,7 +6,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
+from django.contrib.auth.hashers import check_password
+from django.contrib import auth
+from django.conf import settings
 
+# models
+from django.contrib.auth.models import User
+
+# self defined functions 
+import jwt
 
 @api_view(['GET'])
 def current_user(request):
@@ -32,3 +40,20 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserLogin(APIView):
+
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        print(request.data['username'])
+        user = User.objects.filter(username=request.data['username'])
+        serializer = UserSerializer(user, many=True)
+        if(len(serializer.data)==0):
+            return Response("Wrong UserName", status=status.HTTP_400_BAD_REQUEST)
+        passcheck = check_password(request.data['password'], serializer.data[0]['password'])
+        if(passcheck!=True):
+            return Response("Wrong Password", status=status.HTTP_400_BAD_REQUEST)
+        auth_token = jwt.encode({'username': request.data['username']}, settings.JWT_SECRET_KEY)
+        data = {'user': serializer.data, 'token': auth_token}
+        return Response(data, status=status.HTTP_200_OK)

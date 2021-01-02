@@ -2,12 +2,21 @@ from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
 
-
 class UserSerializer(serializers.ModelSerializer):
+
+    token = serializers.SerializerMethodField()
+
+    def get_token(self, obj):
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        print("obj ",obj, "type ", type(obj))
+        payload = jwt_payload_handler(obj)
+        token = jwt_encode_handler(payload)
+        return token
 
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('token','id','username','email', 'password')
 
 
 class UserSerializerWithToken(serializers.ModelSerializer):
@@ -18,7 +27,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     def get_token(self, obj):
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
+        print("obj ",obj, "type ", type(obj))
         payload = jwt_payload_handler(obj)
         token = jwt_encode_handler(payload)
         return token
@@ -34,3 +43,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('token', 'username', 'email','first_name', 'last_name','password')
+    
