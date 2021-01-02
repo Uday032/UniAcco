@@ -28,6 +28,7 @@ class App extends Component {
       })
         .then(res => res.json())
         .then(json => {
+          console.log(json);
           this.setState({ username: json.username });
         });
     }
@@ -44,13 +45,13 @@ class App extends Component {
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json);
+        console.log(json.token);
         if(json.token) {
           localStorage.setItem('token', json.token);
           this.setState({
             logged_in: true,
             displayed_form: '',
-            username: json.user[0].username
+            username: json.user.username
           });
         }
         this.setState({

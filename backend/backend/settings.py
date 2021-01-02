@@ -142,7 +142,13 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler',
+    'JWT_SECRET_KEY':  'zNVCFMlnHwzRsEfXypQkhYxqcx4ZkfwWYwBayU03NmJSZzVTn8tErVh0SK9sQWC',
+    'JWT_GET_USER_SECRET_KEY': None,
+    'JWT_PUBLIC_KEY': None,
+    'JWT_PRIVATE_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
 }
-
-JWT_SECRET_KEY= 'zNVCFMlnHwzRsEfXypQkhYxqcx4ZkfwWYwBayU03NmJSZzVTn8tErVh0SK9sQWC'
