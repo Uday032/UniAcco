@@ -14,7 +14,7 @@ git clone https://github.com/Uday032/UniAcco.git
 2. cd backend
 3. virtualvenv env
 4. Mac: source env/bin/activate
-5. pip install -r requiremnets.txt
+5. pip install -r requirements.txt
 6. python manage.py runserver
 ```
 
