@@ -5,16 +5,18 @@ from rest_framework import permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, UserSerializerWithToken
+from .serializers import UserSerializer, UserSerializerWithToken, UserSerializerLoginwithToken
 from django.contrib.auth.hashers import check_password
 from django.contrib import auth
 from django.conf import settings
+import jwt
 
 # models
 from django.contrib.auth.models import User
+from .models import UserLoginHistory
 
 # self defined functions 
-import jwt
+from .functions import get_client_ip
 
 @api_view(['GET'])
 def current_user(request):
@@ -45,9 +47,8 @@ class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
-        print(request.data['username'])
         user = User.objects.filter(username=request.data['username'])
-        serializer = UserSerializer(user, many=True)
+        serializer = UserSerializerLoginwithToken(user, many=True)
         if(len(serializer.data)==0):
             return Response("Wrong UserName", status=status.HTTP_400_BAD_REQUEST)
         passcheck = check_password(request.data['password'], serializer.data[0]['password'])
@@ -59,6 +60,9 @@ class UserLogin(APIView):
             'exp': 1609569034,
             'email': serializer.data[0]['email']
         }
-        auth_token = jwt.encode(payload, settings.JWT_AUTH['JWT_SECRET_KEY'])
+        auth_token = jwt.encode(payload, 'SECRET_KEY')
         data = {'user': serializer.data[0], 'token': auth_token}
+        obj = User.objects.get(id= serializer.data[0]['id'])
+        print(get_client_ip(request))
+        ipsave = UserLoginHistory(ipaddress= get_client_ip(request),user= obj)
         return Response(data, status=status.HTTP_200_OK)
