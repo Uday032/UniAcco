@@ -8,6 +8,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container'
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +23,7 @@ class App extends Component {
   componentDidMount() {
     if (this.state.logged_in) {
       fetch('http://localhost:8000/core/current_user/', {
+        method: 'GET',
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }
@@ -92,10 +94,40 @@ class App extends Component {
   };
 
   render() {
+    const responseSuccessGoogle = async(response) => {
+      console.log(response.accessToken);
+      fetch('http://localhost:8000/core/googlelogin/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "username": response.profileObj.googleId,
+          "email": response.profileObj.email,
+          "first_name": response.profileObj.givenName,
+          "last_name": response.profileObj.familyName,
+          "password": response.profileObj.googleId
+        })
+      })
+        .then(res => res.json())
+        .then(json => {
+          localStorage.setItem('token', json.token);
+          this.setState({
+            logged_in: true,
+            displayed_form: '',
+            username: json.user.username
+          });
+        });
+    };
+
+    const responseFailureGoogle = (response) => {
+      console.log(response);
+    }
+
     let form;
     switch (this.state.displayed_form) {
       case 'login':
-        form = <LoginForm handle_login={this.handle_login} />;
+        form = <LoginForm handle_login={this.handle_login} responseSuccessGoogle={responseSuccessGoogle} responseFailureGoogle={responseFailureGoogle}/>;
         break;
       case 'signup':
         form = <SignupForm handle_signup={this.handle_signup} />;

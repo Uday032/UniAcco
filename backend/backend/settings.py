@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,12 +38,46 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.sites",
 
     'rest_framework',
+    "rest_framework.authtoken",
     'corsheaders',
 
+    # Auth & social auth
+    "dj_rest_auth",
+    "allauth",
+    "allauth.account",
+    "dj_rest_auth.registration",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+
     'core.apps.CoreConfig'
+
+
 ]
+
+ 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+# Disable email verification since this is just a test.
+# If you want to enable it, you'll need to configure django-allauth's email confirmation pages
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+REST_USE_JWT = True
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,6 +176,38 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
 )
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'backend.utils.my_jwt_response_handler',
+
+    'JWT_ENCODE_HANDLER':
+    'rest_framework_jwt.utils.jwt_encode_handler',
+
+    'JWT_DECODE_HANDLER':
+    'rest_framework_jwt.utils.jwt_decode_handler',
+
+    'JWT_PAYLOAD_HANDLER':
+    'rest_framework_jwt.utils.jwt_payload_handler',
+
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+    'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+    
+    
+
+    'JWT_SECRET_KEY': 'SECRET_KEY',
+
+
+
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_AUTH_COOKIE': None,
+     # how long the original token is valid for
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=2),
+
+    # allow refreshing of tokens
+    'JWT_ALLOW_REFRESH': True,
+
+    # this is the maximum time AFTER the token was issued that
+    # it can be refreshed.  exprired tokens can't be refreshed.
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }

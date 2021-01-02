@@ -6,6 +6,9 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
+import GoogleLogin from 'react-google-login';
+
+
 class LoginForm extends React.Component {
   state = {
     username: '',
@@ -23,6 +26,7 @@ class LoginForm extends React.Component {
   };
 
   render() {
+    
     return (
         <>
             <Form onSubmit={e => this.props.handle_login(e, this.state)}>
@@ -47,21 +51,31 @@ class LoginForm extends React.Component {
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control 
-                        type="password" 
-                        size="lg"
-                        name="password"
-                        value={this.state.password}
-                        onChange={this.handle_change}
-                        placeholder="Password" 
-                        required
-                    />
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control 
+                          type="password" 
+                          size="lg"
+                          name="password"
+                          value={this.state.password}
+                          onChange={this.handle_change}
+                          placeholder="Password" 
+                          required
+                      />
                     </Form.Group>
 
                     <Button variant="primary" className="mt-3" type="submit">
-                    Login
+                      Login
                     </Button>
+
+                    <hr />
+                    <div className="text-center">
+                      <GoogleLogin
+                        clientId="708748930922-t75kjse8g80eavl6v4vfd39b0oumt7tn.apps.googleusercontent.com"
+                        buttonText="LOGIN WITH GOOGLE"
+                        onSuccess={this.props.responseSuccessGoogle}
+                        onFailure={this.props.responseFailureGoogle}
+                      />
+                    </div>
                 </Col>
                 </Row>
             </Form>
