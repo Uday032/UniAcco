@@ -21,8 +21,7 @@ def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-    
-    serializer = UserSerializer(request.user)
+    serializer = UserSerializer(request.username)
     return Response(serializer.data)
 
 
@@ -54,6 +53,12 @@ class UserLogin(APIView):
         passcheck = check_password(request.data['password'], serializer.data[0]['password'])
         if(passcheck!=True):
             return Response("Wrong Password", status=status.HTTP_400_BAD_REQUEST)
-        auth_token = jwt.encode({'username': request.data['username']}, settings.JWT_SECRET_KEY)
-        data = {'user': serializer.data, 'token': auth_token}
+        payload = {
+            'user_id': serializer.data[0]['id'],
+            'username': request.data['username'],
+            'exp': 1609569034,
+            'email': serializer.data[0]['email']
+        }
+        auth_token = jwt.encode(payload, settings.JWT_AUTH['JWT_SECRET_KEY'])
+        data = {'user': serializer.data[0], 'token': auth_token}
         return Response(data, status=status.HTTP_200_OK)
