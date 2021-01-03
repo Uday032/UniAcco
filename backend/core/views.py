@@ -84,7 +84,7 @@ class UserLogin(APIView):
         print(get_client_ip(request))
         ipsave = UserLoginHistory(ipaddress= get_client_ip(request),user= obj)
         ipsave.save()
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.data[0], status=status.HTTP_200_OK)
     
 
 class GoogleLogin(APIView):
@@ -95,12 +95,12 @@ class GoogleLogin(APIView):
         print("request ", request.data)
         user = User.objects.filter(email=request.data['email'])
         serializer = UserSerializerLoginwithToken(user, many=True)
-        print(serializer, " awer")
+        print(serializer.data, " awer")
         if(len(serializer.data)==0):
             serializer = UserSerializerWithToken(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({'user': serializer.data}, status=status.HTTP_201_CREATED)
+                return Response( serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             payload = {
@@ -116,6 +116,6 @@ class GoogleLogin(APIView):
             print(get_client_ip(request))
             ipsave = UserLoginHistory(ipaddress= get_client_ip(request),user= obj)
             ipsave.save()
-            return Response(data, status=status.HTTP_200_OK)
+            return Response(serializer.data[0], status=status.HTTP_200_OK)
         
         return Response("error", status=status.HTTP_401_UNAUTHORIZED)
