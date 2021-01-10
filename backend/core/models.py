@@ -9,3 +9,9 @@ class UserLoginHistory(models.Model):
 
     def __str__(self):
         return self.ipaddress
+
+class UserProfile(models.Model):
+
+    University = models.CharField(max_length=50)
+    year = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
