@@ -7,6 +7,7 @@ import './App.css';
 //bootstrap react
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container'
+import AfterLogin from './components/AfterLogin';
 
 
 class App extends Component {
@@ -145,11 +146,11 @@ class App extends Component {
             handle_logout={this.handle_logout}
           />
           {form}
-          <h3>
+          <div>
             {this.state.logged_in
-              ? `Hello, ${this.state.username}`
-              : `${this.state.error}`}
-          </h3>
+              ? <AfterLogin username={this.state.username}/>
+              : <h3>{this.state.error}</h3>}
+          </div>
         </Container>
       </div>
     );
